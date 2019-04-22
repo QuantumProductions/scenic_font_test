@@ -123,7 +123,7 @@ defmodule Play.Scene.Asteroids do
   @movement_keys ["W", "A", "S", "D"]
   @firing_keys [" "]
   @keys_to_track @movement_keys ++ @firing_keys
-  @max_bullets 5
+  @max_bullets 55555
   @new_asteroid_chance_per_second 0.3
 
   @initial_graph Graph.build()
@@ -306,8 +306,6 @@ defmodule Play.Scene.Asteroids do
   end
 
   def filter_event(event, sec, state) do
-    IO.inspect(event, label: "event")
-    IO.inspect(sec, label: "sec")
 
     {:continue, event, state}
   end
@@ -421,8 +419,6 @@ defmodule Play.Scene.Asteroids do
   @spec shoot(%State{}) :: %State{}
   defp shoot(state) do
     %{bullets: bullets, player: player} = state
-    IO.puts("pew pew #{length(bullets)}")
-
     bullet = Play.Bullet.new(player)
 
     %{state | bullets: [bullet | bullets], last_shot: state.time}
@@ -496,7 +492,7 @@ defmodule Play.Scene.Asteroids do
   defp shot_recently?(%State{last_shot: :never}), do: false
 
   defp shot_recently?(%State{last_shot: last_shot, time: time}) do
-    time - last_shot < 4
+    false
   end
 
   defp check_collisions(%State{time: t} = state) when rem(t, 5) == 0 do
@@ -592,7 +588,6 @@ defmodule Play.Scene.Asteroids do
 
   defp player_death(state) do
     %{player: player, num_asteroids_destroyed: num_asteroids_destroyed} = state
-    IO.puts("Player lost!")
 
     Scenic.ViewPort.set_root(
       state.viewport,

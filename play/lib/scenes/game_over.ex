@@ -1,18 +1,20 @@
 defmodule Play.Scene.GameOver do
-  @moduledoc """
-  Shows the user their score and let's them press a button to restart
-  """
-
   use Scenic.Scene
   import Scenic.Primitives
   alias Scenic.Graph
+
+  @font_folder :code.priv_dir(:play) |> Path.join("/static/fonts")
+  @custom_font_hash "UYe2ryfLUpczug9LKyrTxPYGSYTimnPHzpSMbC6UF0M"
+  @custom_metrics_path :code.priv_dir(:scenic_example)
+           |> Path.join("/static/fonts/Courier New.ttf.metrics")
+  @custom_metrics_hash Scenic.Cache.Support.Hash.file!(@custom_metrics_path, :sha)
 
   @initial_graph Graph.build()
                  # Rectangle used for capturing input for the scene
                  |> rect({Play.Utils.screen_width(), Play.Utils.screen_height()})
                  |> text("",
-                   id: :score,
-                   t: {Play.Utils.screen_width() / 2, Play.Utils.screen_height() / 2},
+                   id: :welcome,
+                   t: {Play.Utils.screen_width() / 2, Play.Utils.screen_height() * 0.05},
                    fill: :white,
                    font: :roboto_mono,
                    text_align: :center
@@ -25,9 +27,12 @@ defmodule Play.Scene.GameOver do
 
   @impl Scenic.Scene
   def init(score, scenic_opts) do
+    Cache.Static.Font.load(@font_folder, @custom_font_hash)
+    Cache.Static.FontMetrics.load(@custom_metrics_path, @custom_metrics_hash)
+
     state = %State{viewport: scenic_opts[:viewport]}
 
-    graph = show_score(score)
+    graph = show_welcome()
 
     {:ok, state, push: graph}
   end
@@ -54,6 +59,13 @@ defmodule Play.Scene.GameOver do
 
   defp restart_game(%State{viewport: vp}) do
     Scenic.ViewPort.set_root(vp, {Play.Scene.Splash, Play.Scene.Asteroids})
+  end
+
+  defp show_welcome do
+    message = "Hello World"
+
+    @initial_graph
+    |> Graph.modify(:welcome, &Scenic.Primitives.text(&1, message))
   end
 
   defp show_score(score) do

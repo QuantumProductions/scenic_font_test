@@ -6,7 +6,7 @@ defmodule Play.Bullet do
 
   defstruct [:id, :t, :direction, :color, :size]
 
-  @speed 5
+  @speed 0.1
 
   @type t :: %__MODULE__{
           id: Play.ScenicEntity.id(),
